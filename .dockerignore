@@ -1,0 +1,5 @@
+internal/porodnica_ambulance_home/api_*
+internal/porodnica_ambulance_home/model_*
+internal/porodnica_ambulance_home/routers.go
+build/
+deployments/
