@@ -1,0 +1,253 @@
+openapi: 3.0.0
+servers:
+  - description: Cluster Endpoint
+    url: /api
+info:
+  description: Porodnica Waiting List management for Web-In-Cloud system
+  version: "1.0.0"
+  title: Waiting List Api
+  contact:
+    email: xsmutny@stuba.sk
+  license:
+    name: CC BY 4.0
+    url: "https://creativecommons.org/licenses/by/4.0/"
+tags:
+- name: porodnicaWaitingList
+  description: Porodnica Waiting List API
+
+paths:
+  "/waiting-list/{porodnicaId}/entries":
+    get:
+      tags:
+        - porodnicaWaitingList
+      summary: Provides the porodnica waiting list
+      operationId: getWaitingListEntries
+      description: By using porodnicaId you get list of entries in porodnica waiting list
+      parameters:
+        - in: path
+          name: porodnicaId
+          description: pass the id of the particular porodnica
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: value of the waiting list entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WaitingListEntry"
+              examples:
+                response:
+                  $ref: "#/components/examples/WaitingListEntriesExample"
+        "404":
+          description: Porodnica with such ID does not exist
+    post:
+      tags:
+        - porodnicaWaitingList
+      summary: Saves new entry into waiting list
+      operationId: createWaitingListEntry
+      description: Use this method to store new entry into the waiting list.
+      parameters:
+        - in: path
+          name: porodnicaId
+          description: pass the id of the particular porodnica
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WaitingListEntry"
+            examples:
+              request-sample:
+                $ref: "#/components/examples/WaitingListEntryExample"
+        description: Waiting list entry to store
+        required: true
+      responses:
+        "200":
+          description: >-
+            Value of the waiting list entry with re-computed estimated time of
+            porodnica entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WaitingListEntry"
+              examples:
+                updated-response:
+                  $ref: "#/components/examples/WaitingListEntryExample"
+        "400":
+          description: Missing mandatory properties of input object.
+        "404":
+          description: Porodnica with such ID does not exists
+        "409":
+          description: Entry with the specified id already exists
+  "/waiting-list/{porodnicaId}/entries/{entryId}":
+    get:
+      tags:
+        - porodnicaWaitingList
+      summary: Provides details about waiting list entry
+      operationId: getWaitingListEntry
+      description: >-
+        By using porodnicaId and entryId you can details of particular entry
+        item porodnica.
+      parameters:
+        - in: path
+          name: porodnicaId
+          description: pass the id of the particular porodnica
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: entryId
+          description: pass the id of the particular entry in the waiting list
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: value of the waiting list entries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WaitingListEntry"
+              examples:
+                response:
+                  $ref: "#/components/examples/WaitingListEntryExample"
+        "404":
+          description: Porodnica or Entry with such ID does not exists
+    put:
+      tags:
+        - porodnicaWaitingList
+      summary: Updates specific entry
+      operationId: updateWaitingListEntry
+      description: Use this method to update content of the waiting list entry.
+      parameters:
+        - in: path
+          name: porodnicaId
+          description: pass the id of the particular porodnica
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: entryId
+          description: pass the id of the particular entry in the waiting list
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WaitingListEntry"
+            examples:
+              request:
+                $ref: "#/components/examples/WaitingListEntryExample"
+        description: Waiting list entry to update
+        required: true
+      responses:
+        "200":
+          description: >-
+            value of the waiting list entry with re-computed estimated time of
+            porodnica entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WaitingListEntry"
+              examples:
+                response:
+                  $ref: "#/components/examples/WaitingListEntryExample"
+        "403":
+          description: >-
+            Value of the entryID and the data id is mismatching. Details are
+            provided in the response body.
+        "404":
+          description: Porodnica or Entry with such ID does not exists
+    delete:
+      tags:
+        - porodnicaWaitingList
+      summary: Deletes specific entry
+      operationId: deleteWaitingListEntry
+      description: Use this method to delete the specific entry from the waiting list.
+      parameters:
+        - in: path
+          name: porodnicaId
+          description: pass the id of the particular porodnica
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: entryId
+          description: pass the id of the particular entry in the waiting list
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Item deleted
+        "404":
+          description: Porodnica or Entry with such ID does not exists
+components:
+  schemas:
+    WaitingListEntry:
+      type: object
+      required: [id, patientId, waitingSince, estimatedDurationMinutes]
+      properties:
+        id:
+          type: string
+          example: x321ab3
+          description: Unique id of the entry in this waiting list
+        name:
+          type: string
+          example: Anna Nováková
+          description: Name of patient in waiting list
+        patientId:
+          type: string
+          example: 460527-anna-novakova
+          description: Unique identifier of the patient known to Web-In-Cloud system
+        waitingSince:
+          type: string
+          format: date-time
+          example: "2038-12-24T10:05:00Z"
+          description: Timestamp since when the patient entered the porodnica waiting list
+        estimatedLaborDate:
+          type: string
+          format: date-time
+          example: "2038-12-24T10:35:00Z"
+          description: Estimated time of porod. Ignored on post.
+        gaveBirth:
+          type: boolean
+      example:
+        $ref: "#/components/examples/WaitingListEntryExample"
+  examples:
+    WaitingListEntryExample:
+      summary: Mária Kováčová porod
+      description: |
+        Entry represents a patient waiting in the porodnica for porod
+      value:
+        id: x321ab3
+        name: Mária Kováčová
+        patientId: 74895-maria-kovacova
+        waitingSince: "2038-12-24T10:05:00.000Z"
+        estimatedLaborDate: "2038-12-24T10:35:00.000Z"
+        gaveBirth: false
+    WaitingListEntriesExample:
+      summary: List of waiting patients
+      description: |
+        Example waiting list containing 2 patients
+      value:
+      - id: x321ab3
+        name: Eva Horváthová
+        patientId: 460527-eva-horvathova
+        waitingSince: "2038-12-24T10:05:00.000Z"
+        estimatedLaborDate: "2038-12-24T10:35:00.000Z"
+        gaveBirth: false
+      - id: x321ab4
+        name: Mária Kováčová
+        patientId: 780907-maria-kovacova
+        waitingSince: "2038-12-24T10:25:00.000Z"
+        estimatedLaborDate: "2038-12-24T10:50:00.000Z"
+        gaveBirth: false
