@@ -1,0 +1,8 @@
+generatorName: go-gin-server
+outputDir: /local
+inputSpec: /local/api/porodnica-ambulance-home.openapi.yaml
+enablePostProcessFile: true
+additionalProperties:
+  apiPath: internal/porodnica_ambulance_home
+  packageName: porodnica_ambulance_home
+  interfaceOnly: true
