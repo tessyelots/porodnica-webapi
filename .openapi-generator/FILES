@@ -1,4 +1,6 @@
 internal/porodnica_ambulance_home/README.md
 internal/porodnica_ambulance_home/api_porodnica_waiting_list.go
+internal/porodnica_ambulance_home/api_porodnice.go
+internal/porodnica_ambulance_home/model_porodnica.go
 internal/porodnica_ambulance_home/model_waiting_list_entry.go
 internal/porodnica_ambulance_home/routers.go

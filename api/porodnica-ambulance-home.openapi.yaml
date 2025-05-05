@@ -14,6 +14,8 @@ info:
 tags:
 - name: porodnicaWaitingList
   description: Porodnica Waiting List API
+- name: porodnice
+  description: Porodnica details
 
 paths:
   "/waiting-list/{porodnicaId}/entries":
@@ -190,11 +192,62 @@ paths:
           description: Item deleted
         "404":
           description: Porodnica or Entry with such ID does not exists
+  "/porodnica":
+    post:
+      tags:
+        - porodnice
+      summary: Saves new porodnica definition
+      operationId: createPorodnica
+      description: Use this method to initialize new porodnica in the system
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Porodnica"
+            examples:
+              request-sample:
+                $ref: "#/components/examples/PorodnicaExample"
+        description: Porodnica details to store
+        required: true
+      responses:
+        "200":
+          description: >-
+            Value of stored porodnica
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Porodnica"
+              examples:
+                updated-response:
+                  $ref: "#/components/examples/PorodnicaExample"
+        "400":
+          description: Missing mandatory properties of input object.
+        "409":
+          description: Entry with the specified id already exists
+  "/porodnica/{porodnicaId}":
+    delete:
+      tags:
+        - porodnice
+      summary: Deletes specific porodnica
+      operationId: deletePorodnica
+      description: Use this method to delete the specific porodnica from the system.
+      parameters:
+        - in: path
+          name: porodnicaId
+          description: pass the id of the particular porodnica
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Item deleted
+        "404":
+          description: Porodnica with such ID does not exist
 components:
   schemas:
     WaitingListEntry:
       type: object
-      required: [id, patientId, waitingSince, estimatedDurationMinutes]
+      required: [id, patientId, waitingSince, estimatedLaborDate]
       properties:
         id:
           type: string
@@ -222,6 +275,27 @@ components:
           type: boolean
       example:
         $ref: "#/components/examples/WaitingListEntryExample"
+    Porodnica:
+      type: object
+      required: [ "id", "name", "roomNumber"]
+      properties:
+        id:
+          type: string
+          example: porodnica-martin
+          description: Unique identifier of the porodnica
+        name:
+          type: string
+          example: Univerzitná nemocnica Martin = pôrodnica
+          description: Human readable display name of the porodnica
+        roomNumber:
+          type: string
+          example: 356 - 3.posch
+        waitingList:
+          type: array
+          items:
+            $ref: '#/components/schemas/WaitingListEntry'
+      example:
+          $ref: "#/components/examples/PorodnicaExample"
   examples:
     WaitingListEntryExample:
       summary: Mária Kováčová porod
@@ -251,3 +325,24 @@ components:
         waitingSince: "2038-12-24T10:25:00.000Z"
         estimatedLaborDate: "2038-12-24T10:50:00.000Z"
         gaveBirth: false
+    PorodnicaExample:
+      summary: Sample GP porodnica
+      description: |
+        Example of GP porodnica with waiting list
+      value:
+        id: gp-zvolen
+        name: Porodnica nemocnice vo Zvolene
+        roomNumber: 356 - 3.posch
+        waitingList:
+        - id: x321ab3
+          name: Eva Horváthová
+          patientId: 460527-eva-horvathova
+          waitingSince: "2038-12-24T10:05:00.000Z"
+          estimatedLaborDate: "2038-12-24T10:35:00.000Z"
+          gaveBirth: false
+        - id: x321ab4
+          name: Mária Kováčová
+          patientId: 780907-maria-kovacova
+          waitingSince: "2038-12-24T10:25:00.000Z"
+          estimatedLaborDate: "2038-12-24T10:50:00.000Z"
+          gaveBirth: false

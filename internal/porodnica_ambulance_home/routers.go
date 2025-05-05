@@ -65,6 +65,8 @@ type ApiHandleFunctions struct {
 
 	// Routes for the PorodnicaWaitingListAPI part of the API
 	PorodnicaWaitingListAPI PorodnicaWaitingListAPI
+	// Routes for the PorodniceAPI part of the API
+	PorodniceAPI PorodniceAPI
 }
 
 func getRoutes(handleFunctions ApiHandleFunctions) []Route {
@@ -98,6 +100,18 @@ func getRoutes(handleFunctions ApiHandleFunctions) []Route {
 			http.MethodPut,
 			"/api/waiting-list/:porodnicaId/entries/:entryId",
 			handleFunctions.PorodnicaWaitingListAPI.UpdateWaitingListEntry,
+		},
+		{
+			"CreatePorodnica",
+			http.MethodPost,
+			"/api/porodnica",
+			handleFunctions.PorodniceAPI.CreatePorodnica,
+		},
+		{
+			"DeletePorodnica",
+			http.MethodDelete,
+			"/api/porodnica/:porodnicaId",
+			handleFunctions.PorodniceAPI.DeletePorodnica,
 		},
 	}
 }

@@ -29,7 +29,7 @@ type WaitingListEntry struct {
 	WaitingSince time.Time `json:"waitingSince"`
 
 	// Estimated time of porod. Ignored on post.
-	EstimatedLaborDate time.Time `json:"estimatedLaborDate,omitempty"`
+	EstimatedLaborDate time.Time `json:"estimatedLaborDate"`
 
 	GaveBirth bool `json:"gaveBirth,omitempty"`
 }
