@@ -179,6 +179,10 @@ func (o implPorodnicaWaitingListAPI) UpdateWaitingListEntry(c *gin.Context) {
 			porodnica.WaitingList[entryIndx].EstimatedLaborDate = entry.EstimatedLaborDate
 		}
 
+		if entry.GaveBirth != porodnica.WaitingList[entryIndx].GaveBirth {
+			porodnica.WaitingList[entryIndx].GaveBirth = entry.GaveBirth
+		}
+
 		return porodnica, porodnica.WaitingList[entryIndx], http.StatusOK
 	})
 }
