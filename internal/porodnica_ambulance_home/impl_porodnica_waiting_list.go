@@ -171,6 +171,10 @@ func (o implPorodnicaWaitingListAPI) UpdateWaitingListEntry(c *gin.Context) {
 			porodnica.WaitingList[entryIndx].Id = entry.Id
 		}
 
+		if entry.Name != "" {
+			porodnica.WaitingList[entryIndx].Name = entry.Name
+		}
+
 		if entry.WaitingSince.After(time.Time{}) {
 			porodnica.WaitingList[entryIndx].WaitingSince = entry.WaitingSince
 		}
